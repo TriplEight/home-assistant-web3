@@ -2,4 +2,4 @@ homeassistant
 zigbee2mqtt
 mosquitto
 ipfs
-.env.device
+.env

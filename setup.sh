@@ -5,8 +5,12 @@ echo "this script will create all necessary repositories and start docker contai
 # grap variables from .env file excluding comments
 export $(grep -v '^#' .env | xargs)
 
-##TODO
-# проверка последнего символа в пути. если это "/", то удалить его
+# Check the last symbol in path. if it is "/", then delete it.
+LAST_SYMBOL=${CONFIG_PATH: -1}
+echo "$LAST_SYMBOL"
+if [ "$LAST_SYMBOL" = "/" ]; then
+  CONFIG_PATH="${CONFIG_PATH%?}"
+fi
 
 cd $CONFIG_PATH
 echo "config path - $CONFIG_PATH"
@@ -14,94 +18,129 @@ echo "config path - $CONFIG_PATH"
 ##TODO
 # проверка папок на существование. Если есть, то не нужно их пересоздавать. И заново не нужно скачивать робономику
 
-# create repositories
-mkdir "mosquitto"
-mkdir -p "zigbee2mqtt/data"
-mkdir -p "ipfs/staging"
-mkdir -p "ipfs/data"
-mkdir -p "homeassistant/custom_components"
-mkdir -p "homeassistant/.storage"
+# create IPFS repositories
+if [[ -d ./ipfs/data ]]
+then
+  echo "IPFS directory already exist"
+else
+  mkdir -p "ipfs/data"
+  mkdir -p "ipfs/staging"
+fi
 
-# find path to the zigbee adapter and save it in configuration
 Z2MPATH=$(ls /dev/serial/by-id/)
 Z2MPATH="/dev/serial/by-id/"$Z2MPATH
 export Z2MPATH
 
-# create password for mqtt. Then  save it in home directory and provide this data to z2m configuration
-
 # mqtt broker
-PASSWD=$(openssl rand -hex 10)
-mosquitto_passwd -b -c ./mosquitto/passwd connectivity $PASSWD
+if [[ -d ./mosquitto ]]
+then
+  echo "mosquitto directory already exist"
+else
+  mkdir "mosquitto"
+  mkdir -p "zigbee2mqtt/data"
 
-echo "listener 1883
-allow_anonymous false
-password_file /mosquitto/passwd" | tee ./mosquitto/mosquitto.conf
+  # create password for mqtt. Then  save it in home directory and provide this data to z2m configuration
+  PASSWD=$(openssl rand -hex 10)
+  mosquitto_passwd -b -c ./mosquitto/passwd connectivity $PASSWD
 
-#zigbee2mqtt
-echo "# Home Assistant integration (MQTT discovery)
-homeassistant: true
+  echo "listener 1883
+  allow_anonymous false
+  password_file /mosquitto/passwd" | tee ./mosquitto/mosquitto.conf
 
-# allow new devices to join
-permit_join: false
+  #zigbee2mqtt
+  echo "# Home Assistant integration (MQTT discovery)
+  homeassistant: true
 
-# MQTT settings
-mqtt:
-  # MQTT base topic for zigbee2mqtt MQTT messages
-  base_topic: zigbee2mqtt
-  # MQTT server URL
-  server: 'mqtt://localhost'
-  # MQTT server authentication, uncomment if required:
-  user: connectivity
-  password: $PASSWD
+  # allow new devices to join
+  permit_join: false
 
-frontend:
-  # Optional, default 8080
-  port: 8099
+  # MQTT settings
+  mqtt:
+    # MQTT base topic for zigbee2mqtt MQTT messages
+    base_topic: zigbee2mqtt
+    # MQTT server URL
+    server: 'mqtt://localhost'
+    # MQTT server authentication, uncomment if required:
+    user: connectivity
+    password: $PASSWD
 
-# Serial settings
-serial:
-  # Location of CC2531 USB sniffer
-  port: /dev/ttyACM0
+  frontend:
+    # Optional, default 8080
+    port: 8099
 
-" | tee ./zigbee2mqtt/data/configuration.yaml
+  # Serial settings
+  serial:
+    # Location of CC2531 USB sniffer
+    port: /dev/ttyACM0
 
-# mqtt integration
-echo "{
-  \"version\": 1,
-  \"minor_version\": 1,
-  \"key\": \"core.config_entries\",
-  \"data\": {
-    \"entries\": [
-      {
-        \"entry_id\": \"92c28c246bb8163e5cc9e6dc5b5d8606\",
-        \"version\": 1,
-        \"domain\": \"mqtt\",
-        \"title\": \"localhost\",
-        \"data\": {
-          \"broker\": \"localhost\",
-          \"port\": 1883,
-          \"username\": \"connectivity\",
-          \"password\": \"$PASSWD\",
-          \"discovery\": true,
-          \"discovery_prefix\": \"homeassistant\"
-        },
-        \"options\": {},
-        \"pref_disable_new_entities\": false,
-        \"pref_disable_polling\": false,
-        \"source\": \"user\",
-        \"unique_id\": null,
-        \"disabled_by\": null
-      }
-    ]
+  " | tee ./zigbee2mqtt/data/configuration.yaml
+fi
+
+if [[ -d ./homeassistant/.storage ]]
+then
+  echo "homeassistant/.storage directory already exist"
+else
+  mkdir -p "homeassistant/.storage"
+
+  # mqtt integration
+  echo "{
+    \"version\": 1,
+    \"minor_version\": 1,
+    \"key\": \"core.config_entries\",
+    \"data\": {
+      \"entries\": [
+        {
+          \"entry_id\": \"92c28c246bb8163e5cc9e6dc5b5d8606\",
+          \"version\": 1,
+          \"domain\": \"mqtt\",
+          \"title\": \"localhost\",
+          \"data\": {
+            \"broker\": \"localhost\",
+            \"port\": 1883,
+            \"username\": \"connectivity\",
+            \"password\": \"$PASSWD\",
+            \"discovery\": true,
+            \"discovery_prefix\": \"homeassistant\"
+          },
+          \"options\": {},
+          \"pref_disable_new_entities\": false,
+          \"pref_disable_polling\": false,
+          \"source\": \"user\",
+          \"unique_id\": null,
+          \"disabled_by\": null
+        }
+      ]
+    }
   }
-}
-" | tee ./homeassistant/.storage/core.config_entries
+  " | tee ./homeassistant/.storage/core.config_entries
 
-#download robonomics integration and unpack it
-wget https://github.com/airalab/homeassistant-robonomics-integration/archive/refs/tags/$ROBONOMICS_VERSION.zip &&
-unzip $ROBONOMICS_VERSION.zip &&
-mv homeassistant-robonomics-integration-$ROBONOMICS_VERSION/custom_components/robonomics ./homeassistant/custom_components/ &&
-rm -r homeassistant-robonomics-integration-$ROBONOMICS_VERSION &&
-rm $ROBONOMICS_VERSION.zip
+fi
+
+# create IPFS repositories
+if [[ -d ./homeassistant/custom_components ]]
+then
+  echo "homeassistant/custom_components directory already exist"
+else
+  mkdir -p "homeassistant/custom_components"
+
+  #download robonomics integration and unpack it
+  wget https://github.com/airalab/homeassistant-robonomics-integration/archive/refs/tags/$ROBONOMICS_VERSION.zip &&
+  unzip $ROBONOMICS_VERSION.zip &&
+  mv homeassistant-robonomics-integration-$ROBONOMICS_VERSION/custom_components/robonomics ./homeassistant/custom_components/ &&
+  rm -r homeassistant-robonomics-integration-$ROBONOMICS_VERSION &&
+  rm $ROBONOMICS_VERSION.zip
+fi
+
+if [[ -d ./libp2p-ws-proxy ]]
+then
+  echo "libp2p-ws-proxy directory already exist"
+else
+  #libp2p
+  git clone https://github.com/tubleronchik/libp2p-ws-proxy.git
+  echo "PEER_ID_CONFIG_PATH="peerIdJson.json"
+  RELAY_ADDRESS="$RELAY_ADDRESS"
+  SAVED_DATA_DIR_PATH="saved_data"
+  " > libp2p-ws-proxy/.env
+fi
 
 docker compose up -d
