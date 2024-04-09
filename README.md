@@ -6,6 +6,11 @@ This repository contains docker compose file with Home Assistant + ipfs daemon +
 
 Docker engine + docker compose
 
+Install additional packages:
+```commandline
+sudo apt-get istall wget unzip git
+```
+
 **Insert zigbee ccordinator in your PC before start script!** 
 
 ## Configuration

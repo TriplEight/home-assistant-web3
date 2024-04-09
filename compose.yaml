@@ -1,14 +1,19 @@
 services:
   mosquitto:
     container_name: mosquitto
-    image: eclipse-mosquitto:${MOSQUITTO_VERSION}
+    build:
+      context: ./scripts
+      dockerfile: mosquitto.Dockerfile
+      args:
+        MOSQUITTO_VERSION: ${MOSQUITTO_VERSION}
     restart: unless-stopped
     ports:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - ${CONFIG_PATH}/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
-      - ${CONFIG_PATH}/mosquitto/passwd:/mosquitto/passwd
+      - ${CONFIG_PATH}/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    environment:
+      - MOSQUITTO_PASSWORD=${MOSQUITTO_PASSWORD}
 
   zigbee2mqtt:
     container_name: zigbee2mqtt
@@ -31,6 +36,7 @@ services:
     volumes:
       - ${CONFIG_PATH}/ipfs/data:/data/ipfs
       - ${CONFIG_PATH}/ipfs/staging:/export
+      - ./scripts/001-test.sh:/container-init.d/001-test.sh
     environment:
       - IPFS_PATH=/data/ipfs
     ports:
@@ -44,8 +50,6 @@ services:
     container_name: libp2p-proxy
     build:
       context: ${CONFIG_PATH}/libp2p-ws-proxy/.
-      tags:
-        - "proxy:v0.0.1"
     volumes:
       - ${CONFIG_PATH}/libp2p-ws-proxy:/proxy
     ports:

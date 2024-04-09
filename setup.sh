@@ -12,11 +12,14 @@ if [ "$LAST_SYMBOL" = "/" ]; then
   CONFIG_PATH="${CONFIG_PATH%?}"
 fi
 
-cd $CONFIG_PATH
-echo "config path - $CONFIG_PATH"
-
-##TODO
-# проверка папок на существование. Если есть, то не нужно их пересоздавать. И заново не нужно скачивать робономику
+if [[ -d $CONFIG_PATH ]]
+then
+  cd $CONFIG_PATH
+  echo "config path - $CONFIG_PATH"
+else
+  echo "config directory does not exist. Exit"
+  exit 1
+fi
 
 # create IPFS repositories
 if [[ -d ./ipfs/data ]]
@@ -36,16 +39,16 @@ if [[ -d ./mosquitto ]]
 then
   echo "mosquitto directory already exist"
 else
-  mkdir "mosquitto"
+  mkdir -p "mosquitto/config"
   mkdir -p "zigbee2mqtt/data"
 
   # create password for mqtt. Then  save it in home directory and provide this data to z2m configuration
-  PASSWD=$(openssl rand -hex 10)
-  mosquitto_passwd -b -c ./mosquitto/passwd connectivity $PASSWD
+  MOSQUITTO_PASSWORD=$(openssl rand -hex 10)
+  export MOSQUITTO_PASSWORD
 
   echo "listener 1883
   allow_anonymous false
-  password_file /mosquitto/passwd" | tee ./mosquitto/mosquitto.conf
+  password_file /mosquitto/passwd" | tee ./mosquitto/config/mosquitto.conf
 
   #zigbee2mqtt
   echo "# Home Assistant integration (MQTT discovery)
@@ -62,7 +65,7 @@ else
     server: 'mqtt://localhost'
     # MQTT server authentication, uncomment if required:
     user: connectivity
-    password: $PASSWD
+    password: $MOSQUITTO_PASSWORD
 
   frontend:
     # Optional, default 8080
@@ -98,7 +101,7 @@ else
             \"broker\": \"localhost\",
             \"port\": 1883,
             \"username\": \"connectivity\",
-            \"password\": \"$PASSWD\",
+            \"password\": \"$MOSQUITTO_PASSWORD\",
             \"discovery\": true,
             \"discovery_prefix\": \"homeassistant\"
           },
