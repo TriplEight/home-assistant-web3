@@ -8,10 +8,10 @@ Docker engine + docker compose
 
 Install additional packages:
 ```commandline
-sudo apt-get istall wget unzip git
+sudo apt-get install wget unzip git
 ```
 
-**Insert zigbee ccordinator in your PC before start script!** 
+**Insert zigbee coordinator in your PC before start script!** 
 
 ## Configuration
 
