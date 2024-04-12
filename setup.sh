@@ -139,7 +139,7 @@ then
   echo "libp2p-ws-proxy directory already exist"
 else
   #libp2p
-  git clone https://github.com/tubleronchik/libp2p-ws-proxy.git
+  git clone https://github.com/PinoutLTD/libp2p-ws-proxy.git
   echo "PEER_ID_CONFIG_PATH="peerIdJson.json"
   RELAY_ADDRESS="$RELAY_ADDRESS"
   SAVED_DATA_DIR_PATH="saved_data"
