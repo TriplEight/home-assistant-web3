@@ -63,6 +63,8 @@ services:
     restart: unless-stopped
     volumes:
       - ${CONFIG_PATH}/homeassistant:/config
+      - ${CONFIG_PATH}/mosquitto:/etc/mosquitto
+      - ${CONFIG_PATH}/zigbee2mqtt:/opt/zigbee2mqtt
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus:ro
     privileged: true
