@@ -1,10 +1,10 @@
 # home-assistant-web3-build
 
-This repository contains docker compose file with Home Assistant + ipfs daemon + libp2p proxy + zigbee2mqtt
+This repository contains docker compose file with Home Assistant + ipfs daemon + libp2p proxy + zigbee2mqtt.
 
 ## Requirements 
 
-Docker engine + docker compose
+Docker engine + docker compose.
 
 Install additional packages:
 ```commandline
@@ -15,7 +15,13 @@ sudo apt-get install wget unzip git
 
 ## Configuration
 
-First, you have to create `.env` file. Convert it from `template.env` file:
+First, download the repository and go to it:
+```commandline
+git clone https://github.com/nakata5321/home-assistant-web3-build.git
+cd home-assistant-web3-build/
+```
+
+then you have to create `.env` file. Convert it from `template.env` file:
 ```commandline
 mv template.env .env
 ```
@@ -36,4 +42,7 @@ bash setup.sh
 To stop everything use next command:
 ```commandline
 docker compose down
+docker system prune
 ```
+
+After that you delete all config directories. **This will cause you to lose all settings. You will need root accesses**

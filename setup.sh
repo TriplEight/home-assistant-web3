@@ -2,6 +2,18 @@
 
 echo "this script will create all necessary repositories and start docker containers"
 
+# First we need to check that user insert the zigbee stick
+if [ -d /dev/serial/by-id/ ]; then
+    # the directory exists
+    [ "$(ls -A /path/to/dir)" ] && pass || echo "Cannot find zigbee coordinator location. Please insert it and run script again."
+else
+    echo "Cannot find zigbee coordinator location. Please insert it and run script again. The directory "/dev/serial/by-id/" does not exist"
+    exit
+fi
+Z2MPATH=$(ls /dev/serial/by-id/)
+Z2MPATH="/dev/serial/by-id/"$Z2MPATH
+export Z2MPATH
+
 # grap variables from .env file excluding comments
 export $(grep -v '^#' .env | xargs)
 
@@ -29,10 +41,6 @@ else
   mkdir -p "ipfs/data"
   mkdir -p "ipfs/staging"
 fi
-
-Z2MPATH=$(ls /dev/serial/by-id/)
-Z2MPATH="/dev/serial/by-id/"$Z2MPATH
-export Z2MPATH
 
 # mqtt broker
 if [[ -d ./mosquitto ]]
@@ -66,6 +74,9 @@ else
     # MQTT server authentication, uncomment if required:
     user: connectivity
     password: $MOSQUITTO_PASSWORD
+
+  advanced:
+    channel: $ZIGBEE_CHANNEL
 
   frontend:
     # Optional, default 8080
