@@ -29,6 +29,10 @@ if [ "$LAST_SYMBOL" = "/" ]; then
   CONFIG_PATH="${CONFIG_PATH%?}"
 fi
 
+# save current path to return later
+CURRENT_PATH=$(pwd)
+
+
 if [[ -d $CONFIG_PATH ]]
 then
   cd $CONFIG_PATH
@@ -162,4 +166,6 @@ else
   " > libp2p-ws-proxy/.env
 fi
 
+# return to the directory with compose
+cd $CURRENT_PATH
 docker compose up -d
