@@ -10,6 +10,7 @@ if [ -d /dev/serial/by-id/ ]; then
   else
     echo "Cannot find zigbee coordinator location. Please insert it and run script again."
     exit
+  fi
 else
     echo "Cannot find zigbee coordinator location. Please insert it and run script again. The directory "/dev/serial/by-id/" does not exist"
     exit
