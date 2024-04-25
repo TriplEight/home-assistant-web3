@@ -4,8 +4,12 @@ echo "this script will create all necessary repositories and start docker contai
 
 # First we need to check that user insert the zigbee stick
 if [ -d /dev/serial/by-id/ ]; then
-    # the directory exists
-    [ "$(ls -A /dev/serial/by-id/)" ] && pass || echo "Cannot find zigbee coordinator location. Please insert it and run script again."
+  # the directory exists
+  if [ "$(ls -A /dev/serial/by-id/)" ]; then
+    echo "the zigbee coordinator is installed"
+  else
+    echo "Cannot find zigbee coordinator location. Please insert it and run script again."
+    exit
 else
     echo "Cannot find zigbee coordinator location. Please insert it and run script again. The directory "/dev/serial/by-id/" does not exist"
     exit
