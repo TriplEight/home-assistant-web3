@@ -6,6 +6,8 @@ This repository contains docker compose file with Home Assistant + ipfs daemon +
 
 Docker engine + docker compose.
 
+**Docker should start without root preventives.** This is important to provide correct access to directories.
+
 Install additional packages:
 ```commandline
 sudo apt-get install wget unzip git
@@ -42,7 +44,6 @@ bash setup.sh
 To stop everything use next command:
 ```commandline
 docker compose down
-docker system prune
 ```
 
 After that you delete all config directories. **This will cause you to lose all settings. You will need root accesses**

@@ -2,6 +2,8 @@
 
 echo "this script will create all necessary repositories and start docker containers"
 
+
+
 # First we need to check that user insert the zigbee stick
 if [ -d /dev/serial/by-id/ ]; then
   # the directory exists
@@ -18,6 +20,14 @@ fi
 Z2MPATH=$(ls /dev/serial/by-id/)
 Z2MPATH="/dev/serial/by-id/"$Z2MPATH
 export Z2MPATH
+
+# check if user in docker group
+if id -nG "$USER" | grep -qw "docker"; then
+    echo "$USER belongs to docker group"
+else
+    echo "$USER does not belong to docker. Please add $USER to group."
+    exit 1
+fi
 
 # grap variables from .env file excluding comments
 export $(grep -v '^#' .env | xargs)
