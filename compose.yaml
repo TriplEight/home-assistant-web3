@@ -44,7 +44,7 @@ services:
       - 4001:4001/tcp
       - 4001:4001/udp
       - 127.0.0.1:5001:5001
-      - 127.0.0.1:8080:8080
+      - 8080:8080
     command: ["daemon", "--enable-gc", "--migrate=true", "--agent-version-suffix=docker"]
 
   libp2p:

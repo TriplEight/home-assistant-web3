@@ -149,7 +149,7 @@ else
 
 fi
 
-# create IPFS repositories
+# create homeassistant/custom_components repository
 if [[ -d ./homeassistant/custom_components ]]
 then
   echo "homeassistant/custom_components directory already exist"
