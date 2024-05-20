@@ -103,9 +103,7 @@ else
   MOSQUITTO_PASSWORD=$(openssl rand -hex 10)
   export MOSQUITTO_PASSWORD
 
-  echo "listener 1883
-  allow_anonymous false
-  password_file /mosquitto/passwd" | tee ./mosquitto/config/mosquitto.conf
+  cp $CURRENT_PATH/scripts/mosquitto.conf  ./mosquitto/config/mosquitto.conf
 
   #zigbee2mqtt
   echo "# Home Assistant integration (MQTT discovery)
