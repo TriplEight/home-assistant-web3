@@ -22,7 +22,7 @@ Z2MPATH=$(ls /dev/serial/by-id/)
 
 if (($NUMB > 1)); then
   echo "You have more that 1 connected devices. Please choose one"
-  select f in /dev/serial/by-id/; do
+  select f in /dev/serial/by-id/*; do
     test -n "$f" && break
     echo ">>> Invalid Selection"
   done
@@ -50,7 +50,7 @@ else
 fi
 
 # check .env file
-if [[ .env ]]
+if [[ -f .env ]]
 then
   echo ". env file exists"
 else
