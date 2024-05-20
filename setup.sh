@@ -192,18 +192,6 @@ else
   rm $ROBONOMICS_VERSION.zip
 fi
 
-if [[ -d ./libp2p-ws-proxy ]]
-then
-  echo "libp2p-ws-proxy directory already exist"
-else
-  #libp2p
-  git clone https://github.com/PinoutLTD/libp2p-ws-proxy.git
-  echo "PEER_ID_CONFIG_PATH="peerIdJson.json"
-  RELAY_ADDRESS="$RELAY_ADDRESS"
-  SAVED_DATA_DIR_PATH="saved_data"
-  " > libp2p-ws-proxy/.env
-fi
-
 # return to the directory with compose
 cd $CURRENT_PATH
 docker compose up -d
