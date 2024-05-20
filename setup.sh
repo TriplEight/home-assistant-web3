@@ -2,8 +2,6 @@
 
 echo "this script will create all necessary repositories and start docker containers"
 
-
-
 # First we need to check that user insert the zigbee stick
 if [ -d /dev/serial/by-id/ ]; then
   # the directory exists
@@ -17,9 +15,31 @@ else
     echo "Cannot find zigbee coordinator location. Please insert it and run script again. The directory "/dev/serial/by-id/" does not exist"
     exit
 fi
+
+# count how many devices connected
+NUMB=$(ls -1q /dev/serial/by-id/ | wc -l)
 Z2MPATH=$(ls /dev/serial/by-id/)
+
+if (($NUMB > 1)); then
+  echo "You have more that 1 connected devices. Please choose one"
+  select f in /dev/serial/by-id/; do
+    test -n "$f" && break
+    echo ">>> Invalid Selection"
+  done
+  echo "You select $f"
+  Z2MPATH=$f
+fi
+
 Z2MPATH="/dev/serial/by-id/"$Z2MPATH
 export Z2MPATH
+
+echo "Checking docker installation"
+if command -v docker &> /dev/null; then
+    echo "Docker installation found"
+else
+    echo "Docker installation not found. Please install docker."
+    exit 1
+fi
 
 # check if user in docker group
 if id -nG "$USER" | grep -qw "docker"; then
@@ -27,6 +47,15 @@ if id -nG "$USER" | grep -qw "docker"; then
 else
     echo "$USER does not belong to docker. Please add $USER to group."
     exit 1
+fi
+
+# check .env file
+if [[ .env ]]
+then
+  echo ". env file exists"
+else
+  echo ".env file does not exist. Exit"
+  exit 1
 fi
 
 # grap variables from .env file excluding comments
