@@ -18,7 +18,6 @@ fi
 
 # count how many devices connected
 NUMB=$(ls -1q /dev/serial/by-id/ | wc -l)
-Z2MPATH=$(ls /dev/serial/by-id/)
 
 if (($NUMB > 1)); then
   echo "You have more that 1 connected devices. Please choose one"
@@ -28,9 +27,11 @@ if (($NUMB > 1)); then
   done
   echo "You select $f"
   Z2MPATH=$f
+else
+  Z2MPATH=$(ls /dev/serial/by-id/)
+  Z2MPATH="/dev/serial/by-id/"$Z2MPATH
 fi
 
-Z2MPATH="/dev/serial/by-id/"$Z2MPATH
 export Z2MPATH
 
 echo "Checking docker installation"
