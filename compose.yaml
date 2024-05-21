@@ -19,6 +19,7 @@ services:
   zigbee2mqtt:
     container_name: zigbee2mqtt
     image: koenkk/zigbee2mqtt:${Z2M_VERSION}
+    profiles: [z2m]
     restart: unless-stopped
     volumes:
       - ${CONFIG_PATH}/zigbee2mqtt/data:/app/data

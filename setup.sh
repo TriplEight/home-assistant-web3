@@ -2,6 +2,8 @@
 
 echo "this script will create all necessary repositories and start docker containers"
 
+Z2MENABLE=true
+
 # First we need to check that user insert the zigbee stick
 if [ -d /dev/serial/by-id/ ]; then
   # the directory exists
@@ -9,11 +11,33 @@ if [ -d /dev/serial/by-id/ ]; then
     echo "the zigbee coordinator is installed"
   else
     echo "Cannot find zigbee coordinator location. Please insert it and run script again."
-    exit
+    echo "Do you want to continue without zigbee coordinator? It will not start Zigbee2MQTT container."
+    while true; do
+        read -p "Do you want to proceed? (y/n) " yn
+        case $yn in
+	          [yY] ) echo ok, we will proceed;
+	            Z2MENABLE=false
+		          break;;
+	          [nN] ) echo exiting...;
+		          exit;;
+	          * ) echo invalid response;;
+        esac
+    done
   fi
 else
     echo "Cannot find zigbee coordinator location. Please insert it and run script again. The directory "/dev/serial/by-id/" does not exist"
-    exit
+    echo "Do you want to continue without zigbee coordinator? It will not start Zigbee2MQTT container."
+    while true; do
+        read -p "Do you want to proceed? (y/n) " yn
+        case $yn in
+	          [yY] ) echo ok, we will proceed;
+	            Z2MENABLE=false
+		          break;;
+	          [nN] ) echo exiting...;
+		          exit;;
+	          * ) echo invalid response;;
+        esac
+    done
 fi
 
 # count how many devices connected
@@ -194,4 +218,12 @@ fi
 
 # return to the directory with compose
 cd $CURRENT_PATH
-docker compose up -d
+
+
+if [ "$Z2MENABLE" = "true" ]; then
+    echo "start docker with zigbee2mqtt"
+    docker compose up --profile z2m -d
+else
+    echo "start docker without zigbee2mqtt"
+    docker compose up -d
+fi
