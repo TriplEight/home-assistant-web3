@@ -19,6 +19,7 @@ services:
   zigbee2mqtt:
     container_name: zigbee2mqtt
     image: koenkk/zigbee2mqtt:${Z2M_VERSION}
+    profiles: [z2m]
     restart: unless-stopped
     volumes:
       - ${CONFIG_PATH}/zigbee2mqtt/data:/app/data
@@ -50,8 +51,7 @@ services:
   libp2p:
     container_name: libp2p-proxy
     restart: unless-stopped
-    build:
-      context: ${CONFIG_PATH}/libp2p-ws-proxy/.
+    image: ghcr.io/pinoutltd/libp2p-ws-proxy:latest
     ports:
       - 127.0.0.1:8888:8888
       - 127.0.0.1:9999:9999

@@ -27,10 +27,11 @@ then you have to create `.env` file. Convert it from `template.env` file:
 ```commandline
 mv template.env .env
 ```
-After that, open the file and insert libp2p RELAY_ADDRESS.
+After that,You may open the file and edit default values such as: 
+- Versions of packages
+- path to repository where will be stored all configurations folders.
+- time zone in ["tz database name"](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
-Optionally, you can provide path to repository where will be stored all configurations folders.
-Also, you can provide your time zone in ["tz database name"](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 
 
 ## Installation and Run
@@ -39,6 +40,9 @@ Run bash script:
 ```commandline
 bash setup.sh
 ```
+
+After everything started, Home Assistant web interface will be on 8123 port and zigbee2mqtt on 8099 port.
+
 ## Stop
 
 To stop everything use next command:

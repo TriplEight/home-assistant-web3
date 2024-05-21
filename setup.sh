@@ -2,7 +2,7 @@
 
 echo "this script will create all necessary repositories and start docker containers"
 
-
+Z2MENABLE=true
 
 # First we need to check that user insert the zigbee stick
 if [ -d /dev/serial/by-id/ ]; then
@@ -11,15 +11,60 @@ if [ -d /dev/serial/by-id/ ]; then
     echo "the zigbee coordinator is installed"
   else
     echo "Cannot find zigbee coordinator location. Please insert it and run script again."
-    exit
+    echo "Do you want to continue without zigbee coordinator? It will not start Zigbee2MQTT container."
+    while true; do
+        read -p "Do you want to proceed? (y/n) " yn
+        case $yn in
+	          [yY] ) echo ok, we will proceed;
+	            Z2MENABLE=false
+		          break;;
+	          [nN] ) echo exiting...;
+		          exit;;
+	          * ) echo invalid response;;
+        esac
+    done
   fi
 else
     echo "Cannot find zigbee coordinator location. Please insert it and run script again. The directory "/dev/serial/by-id/" does not exist"
-    exit
+    echo "Do you want to continue without zigbee coordinator? It will not start Zigbee2MQTT container."
+    while true; do
+        read -p "Do you want to proceed? (y/n) " yn
+        case $yn in
+	          [yY] ) echo ok, we will proceed;
+	            Z2MENABLE=false
+		          break;;
+	          [nN] ) echo exiting...;
+		          exit;;
+	          * ) echo invalid response;;
+        esac
+    done
 fi
-Z2MPATH=$(ls /dev/serial/by-id/)
-Z2MPATH="/dev/serial/by-id/"$Z2MPATH
+
+# count how many devices connected
+NUMB=$(ls -1q /dev/serial/by-id/ | wc -l)
+
+if (($NUMB > 1)); then
+  echo "You have more that 1 connected devices. Please choose one"
+  select f in /dev/serial/by-id/*; do
+    test -n "$f" && break
+    echo ">>> Invalid Selection"
+  done
+  echo "You select $f"
+  Z2MPATH=$f
+else
+  Z2MPATH=$(ls /dev/serial/by-id/)
+  Z2MPATH="/dev/serial/by-id/"$Z2MPATH
+fi
+
 export Z2MPATH
+
+echo "Checking docker installation"
+if command -v docker &> /dev/null; then
+    echo "Docker installation found"
+else
+    echo "Docker installation not found. Please install docker."
+    exit 1
+fi
 
 # check if user in docker group
 if id -nG "$USER" | grep -qw "docker"; then
@@ -27,6 +72,15 @@ if id -nG "$USER" | grep -qw "docker"; then
 else
     echo "$USER does not belong to docker. Please add $USER to group."
     exit 1
+fi
+
+# check .env file
+if [[ -f .env ]]
+then
+  echo ". env file exists"
+else
+  echo ".env file does not exist. Exit"
+  exit 1
 fi
 
 # grap variables from .env file excluding comments
@@ -73,9 +127,7 @@ else
   MOSQUITTO_PASSWORD=$(openssl rand -hex 10)
   export MOSQUITTO_PASSWORD
 
-  echo "listener 1883
-  allow_anonymous false
-  password_file /mosquitto/passwd" | tee ./mosquitto/config/mosquitto.conf
+  cp $CURRENT_PATH/scripts/mosquitto.conf  ./mosquitto/config/mosquitto.conf
 
   #zigbee2mqtt
   echo "# Home Assistant integration (MQTT discovery)
@@ -164,18 +216,14 @@ else
   rm $ROBONOMICS_VERSION.zip
 fi
 
-if [[ -d ./libp2p-ws-proxy ]]
-then
-  echo "libp2p-ws-proxy directory already exist"
-else
-  #libp2p
-  git clone https://github.com/PinoutLTD/libp2p-ws-proxy.git
-  echo "PEER_ID_CONFIG_PATH="peerIdJson.json"
-  RELAY_ADDRESS="$RELAY_ADDRESS"
-  SAVED_DATA_DIR_PATH="saved_data"
-  " > libp2p-ws-proxy/.env
-fi
-
 # return to the directory with compose
 cd $CURRENT_PATH
-docker compose up -d
+
+
+if [ "$Z2MENABLE" = "true" ]; then
+    echo "start docker with zigbee2mqtt"
+    docker compose --profile z2m up -d
+else
+    echo "start docker without zigbee2mqtt"
+    docker compose up -d
+fi
