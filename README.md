@@ -29,7 +29,6 @@ mv template.env .env
 ```
 After that,You may open the file and edit default values such as: 
 - Versions of packages
-- libp2p RELAY_ADDRESS.
 - path to repository where will be stored all configurations folders.
 - time zone in ["tz database name"](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 

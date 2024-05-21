@@ -222,7 +222,7 @@ cd $CURRENT_PATH
 
 if [ "$Z2MENABLE" = "true" ]; then
     echo "start docker with zigbee2mqtt"
-    docker compose up --profile z2m -d
+    docker compose --profile z2m up -d
 else
     echo "start docker without zigbee2mqtt"
     docker compose up -d
