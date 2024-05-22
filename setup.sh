@@ -9,6 +9,22 @@ if [ -d /dev/serial/by-id/ ]; then
   # the directory exists
   if [ "$(ls -A /dev/serial/by-id/)" ]; then
     echo "the zigbee coordinator is installed"
+    # count how many devices connected
+    NUMB=$(ls -1q /dev/serial/by-id/ | wc -l)
+
+    if (($NUMB > 1)); then
+      echo "You have more that 1 connected devices. Please choose one"
+      select f in /dev/serial/by-id/*; do
+        test -n "$f" && break
+        echo ">>> Invalid Selection"
+      done
+      echo "You select $f"
+      Z2MPATH=$f
+    else
+      Z2MPATH=$(ls /dev/serial/by-id/)
+      Z2MPATH="/dev/serial/by-id/"$Z2MPATH
+    fi
+
   else
     echo "Cannot find zigbee coordinator location. Please insert it and run script again."
     echo "Do you want to continue without zigbee coordinator? It will not start Zigbee2MQTT container."
@@ -23,6 +39,7 @@ if [ -d /dev/serial/by-id/ ]; then
 	          * ) echo invalid response;;
         esac
     done
+    Z2MPATH="."
   fi
 else
     echo "Cannot find zigbee coordinator location. Please insert it and run script again. The directory "/dev/serial/by-id/" does not exist"
@@ -38,24 +55,8 @@ else
 	          * ) echo invalid response;;
         esac
     done
+    Z2MPATH="."
 fi
-
-# count how many devices connected
-NUMB=$(ls -1q /dev/serial/by-id/ | wc -l)
-
-if (($NUMB > 1)); then
-  echo "You have more that 1 connected devices. Please choose one"
-  select f in /dev/serial/by-id/*; do
-    test -n "$f" && break
-    echo ">>> Invalid Selection"
-  done
-  echo "You select $f"
-  Z2MPATH=$f
-else
-  Z2MPATH=$(ls /dev/serial/by-id/)
-  Z2MPATH="/dev/serial/by-id/"$Z2MPATH
-fi
-
 export Z2MPATH
 
 echo "Checking docker installation"
@@ -119,12 +120,16 @@ fi
 if [[ -d ./mosquitto ]]
 then
   echo "mosquitto directory already exist"
+  MOSQUITTO_PASSWORD=`cat ./mosquitto/raw.txt`
+  export MOSQUITTO_PASSWORD
 else
   mkdir -p "mosquitto/config"
   mkdir -p "zigbee2mqtt/data"
 
-  # create password for mqtt. Then  save it in home directory and provide this data to z2m configuration
+  # create password for mqtt. Then save it in mosquitto home directory and provide this data to z2m configuration
   MOSQUITTO_PASSWORD=$(openssl rand -hex 10)
+  echo "$MOSQUITTO_PASSWORD" > ./mosquitto/raw.txt
+
   export MOSQUITTO_PASSWORD
 
   cp $CURRENT_PATH/scripts/mosquitto.conf  ./mosquitto/config/mosquitto.conf
