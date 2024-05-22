@@ -19,7 +19,7 @@ sudo apt-get install wget unzip git
 
 First, download the repository and go to it:
 ```commandline
-git clone https://github.com/nakata5321/home-assistant-web3-build.git
+git clone https://github.com/PinoutLTD/home-assistant-web3-build.git
 cd home-assistant-web3-build/
 ```
 
