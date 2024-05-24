@@ -19,7 +19,7 @@ sudo apt-get install wget unzip git
 
 First, download the repository and go to it:
 ```commandline
-git clone https://github.com/nakata5321/home-assistant-web3-build.git
+git clone https://github.com/PinoutLTD/home-assistant-web3-build.git
 cd home-assistant-web3-build/
 ```
 
@@ -47,7 +47,7 @@ After everything started, Home Assistant web interface will be on 8123 port and 
 
 To stop everything use next command:
 ```commandline
-docker compose down
+docker compose --profile z2m down
 ```
 
 After that you delete all config directories. **This will cause you to lose all settings. You will need root accesses**
