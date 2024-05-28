@@ -19,13 +19,13 @@ sudo apt-get install wget unzip git
 
 First, download the repository and go to it:
 ```commandline
-git clone https://github.com/PinoutLTD/home-assistant-web3-build.git
+git clone https://github.com/airalab/home-assistant-web3-build
 cd home-assistant-web3-build/
 ```
 
 then you have to create `.env` file. Convert it from `template.env` file:
 ```commandline
-mv template.env .env
+cp template.env .env
 ```
 After that,You may open the file and edit default values such as: 
 - Versions of packages
