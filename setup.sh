@@ -13,7 +13,7 @@ if [ -d /dev/serial/by-id/ ]; then
     NUMB=$(ls -1q /dev/serial/by-id/ | wc -l)
 
     if (($NUMB > 1)); then
-      echo "You have more that 1 connected devices. Please choose one"
+      echo "You have more than 1 connected device, which seems to be a Zigbee coordinator. Please choose one:"
       select f in /dev/serial/by-id/*; do
         test -n "$f" && break
         echo ">>> Invalid Selection"
@@ -29,9 +29,9 @@ if [ -d /dev/serial/by-id/ ]; then
     echo "Cannot find zigbee coordinator location. Please insert it and run script again."
     echo "Do you want to continue without zigbee coordinator? It will not start Zigbee2MQTT container."
     while true; do
-        read -p "Do you want to proceed? (y/n) " yn
+        read -p "Do you want to proceed? (Y/n) " yn
         case $yn in
-	          [yY] ) echo ok, we will proceed;
+	          [yY]| "" ) echo ok, we will proceed;
 	            Z2MENABLE=false
 		          break;;
 	          [nN] ) echo exiting...;
@@ -45,9 +45,9 @@ else
     echo "Cannot find zigbee coordinator location. Please insert it and run script again. The directory "/dev/serial/by-id/" does not exist"
     echo "Do you want to continue without zigbee coordinator? It will not start Zigbee2MQTT container."
     while true; do
-        read -p "Do you want to proceed? (y/n) " yn
+        read -p "Do you want to proceed? (Y/n) " yn
         case $yn in
-	          [yY] ) echo ok, we will proceed;
+	          [yY]| "" ) echo ok, we will proceed;
 	            Z2MENABLE=false
 		          break;;
 	          [nN] ) echo exiting...;
@@ -93,6 +93,9 @@ echo "$LAST_SYMBOL"
 if [ "$LAST_SYMBOL" = "/" ]; then
   CONFIG_PATH="${CONFIG_PATH%?}"
 fi
+
+# grap version of packages
+export $(grep -v '^#' scripts/packages.env | xargs)
 
 # save current path to return later
 CURRENT_PATH=$(pwd)
@@ -232,3 +235,7 @@ else
     echo "start docker without zigbee2mqtt"
     docker compose up -d
 fi
+
+# at the end save Z2Mpath to env file for use in the update script
+echo "" >> .env
+echo "Z2MPATH=$Z2MPATH" >> .env
