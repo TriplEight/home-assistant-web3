@@ -49,8 +49,6 @@ docker compose --profile z2m pull
 # save current path to return later
 CURRENT_PATH=$(pwd)
 
-sh stop.sh
-
 cd $CONFIG_PATH
 echo "config path - $CONFIG_PATH"
 
@@ -68,7 +66,7 @@ echo "Robonomics cur version - $ROBO_CUR_VER"
 
 if [ "$ROBO_CUR_VER" != "$ROBONOMICS_VERSION" ]; then
     echo "robonomics version is out of date. Updating it"
-    rm -r homeassistant/custom_components/robonomics
+    docker exec -d homeassistant sh -c "rm -r custom_components/robonomics"
     #download robonomics integration and unpack it
     wget https://github.com/airalab/homeassistant-robonomics-integration/archive/refs/tags/$ROBONOMICS_VERSION.zip &&
     unzip $ROBONOMICS_VERSION.zip &&
@@ -81,6 +79,8 @@ fi
 
 # return to the directory with compose
 cd $CURRENT_PATH
+
+sh stop.sh
 
 #check Z2M path - if we have it, then start compose with Z2M
 if [ "$Z2MPATH" = "." ]; then

@@ -58,6 +58,7 @@ else
     Z2MPATH="."
 fi
 export Z2MPATH
+echo "Z2M path is - $Z2MPATH"
 
 echo "Checking docker installation"
 if command -v docker &> /dev/null; then
