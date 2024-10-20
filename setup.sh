@@ -69,9 +69,9 @@ fi
 
 # check if user in docker group
 if id -nG "$USER" | grep -qw "docker"; then
-    echo "$USER belongs to docker group"
+    echo "$USER user belongs to docker group"
 else
-    echo "$USER does not belong to docker group. Please add $USER to docker group."
+    echo "$USER user does not belong to docker group. Please add $USER user to docker group."
     exit 1
 fi
 
@@ -80,7 +80,7 @@ if [[ -f .env ]]
 then
   echo ".env file exists"
 else
-  echo "Fatal error. .env file does not exist. Exit"
+  echo "Fatal error: .env file does not exist. Exit"
   exit 1
 fi
 
@@ -106,7 +106,7 @@ then
   cd $CONFIG_PATH
   echo "config path - $CONFIG_PATH"
 else
-  echo "Fatal error. config directory does not exist. Exit"
+  echo "Fatal error: config directory does not exist. Exit"
   exit 1
 fi
 
@@ -215,7 +215,7 @@ then
   echo "homeassistant/custom_components directory already exists"
 else
   mkdir -p "homeassistant/custom_components"
-  #download robonomics integration and unpack it
+  # download robonomics integration and unpack it
   wget https://github.com/airalab/homeassistant-robonomics-integration/archive/refs/tags/$ROBONOMICS_VERSION.zip &&
   unzip $ROBONOMICS_VERSION.zip &&
   mv homeassistant-robonomics-integration-$ROBONOMICS_VERSION/custom_components/robonomics ./homeassistant/custom_components/ &&
