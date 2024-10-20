@@ -29,7 +29,7 @@ services:
       - TZ=${TZ}
     devices:
       # Make sure this matched your adapter location
-      - ${Z2MPATH}:/dev/ttyACM0
+      - ${Z2MPATH}:/dev/ttyUSB0
 
   ipfs:
     container_name: ipfs-daemon
@@ -76,5 +76,4 @@ services:
     cap_add:
       - NET_ADMIN
       - NET_RAW
-    privileged: true
     network_mode: host

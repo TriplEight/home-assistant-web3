@@ -130,8 +130,8 @@ else
   mkdir -p "zigbee2mqtt/data"
 
   # create password for mqtt. Then save it in mosquitto home directory and provide this data to z2m configuration
-  MOSQUITTO_PASSWORD=$(openssl rand -hex 10)
-  echo "$MOSQUITTO_PASSWORD" > ./mosquitto/raw.txt
+  MOSQUITTO_PASSWORD=$(openssl rand -base64 32)
+  echo "MOSQUITTO_PASSWORD=$MOSQUITTO_PASSWORD" >> .env
 
   export MOSQUITTO_PASSWORD
 
@@ -232,7 +232,7 @@ if [ "$Z2MENABLE" = "true" ]; then
     docker compose --profile z2m up -d
 else
     echo "start docker without zigbee2mqtt"
-    docker compose up -d
+    docker compose --env-file .env --env-file scripts/packages.env up -d
 fi
 
 # at the end save Z2Mpath to env file for use in the update script
