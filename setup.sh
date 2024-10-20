@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "this script will create all necessary repositories and start docker containers"
+echo "This script will create all the necessary repositories and start the docker containers"
 
 Z2MENABLE=true
 
@@ -8,7 +8,7 @@ Z2MENABLE=true
 if [ -d /dev/serial/by-id/ ]; then
   # the directory exists
   if [ "$(ls -A /dev/serial/by-id/)" ]; then
-    echo "the zigbee coordinator is installed"
+    echo "Zigbee coordinator is installed"
     # count how many devices connected
     NUMB=$(ls -1q /dev/serial/by-id/ | wc -l)
 
@@ -42,12 +42,12 @@ if [ -d /dev/serial/by-id/ ]; then
     Z2MPATH="."
   fi
 else
-    echo "Cannot find zigbee coordinator location. Please insert it and run script again. The directory "/dev/serial/by-id/" does not exist"
-    echo "Do you want to continue without zigbee coordinator? It will not start Zigbee2MQTT container."
+    echo "Cannot find Zigbee coordinator location. Please insert it and run script again. The directory "/dev/serial/by-id/" does not exist"
+    echo "Do you want to continue without Zigbee coordinator? We will not start Zigbee2MQTT container."
     while true; do
         read -p "Do you want to proceed? (Y/n) " yn
         case $yn in
-	          [yY]| "" ) echo ok, we will proceed;
+	          [yY]| "" ) echo Ok, proceeding without Zigbee coordinator;
 	            Z2MENABLE=false
 		          break;;
 	          [nN] ) echo exiting...;
@@ -63,7 +63,7 @@ echo "Checking docker installation"
 if command -v docker &> /dev/null; then
     echo "Docker installation found"
 else
-    echo "Docker installation not found. Please install docker."
+    echo "Docker installation not found. Please install Docker."
     exit 1
 fi
 
@@ -71,16 +71,16 @@ fi
 if id -nG "$USER" | grep -qw "docker"; then
     echo "$USER belongs to docker group"
 else
-    echo "$USER does not belong to docker. Please add $USER to group."
+    echo "$USER does not belong to docker group. Please add $USER to docker group."
     exit 1
 fi
 
 # check .env file
 if [[ -f .env ]]
 then
-  echo ". env file exists"
+  echo ".env file exists"
 else
-  echo ".env file does not exist. Exit"
+  echo "Fatal error. .env file does not exist. Exit"
   exit 1
 fi
 
@@ -106,14 +106,14 @@ then
   cd $CONFIG_PATH
   echo "config path - $CONFIG_PATH"
 else
-  echo "config directory does not exist. Exit"
+  echo "Fatal error. config directory does not exist. Exit"
   exit 1
 fi
 
 # create IPFS repositories
 if [[ -d ./ipfs/data ]]
 then
-  echo "IPFS directory already exist"
+  echo "IPFS directory already exists"
 else
   mkdir -p "ipfs/data"
   mkdir -p "ipfs/staging"
@@ -122,7 +122,7 @@ fi
 # mqtt broker
 if [[ -d ./mosquitto ]]
 then
-  echo "mosquitto directory already exist"
+  echo "Mosquitto directory already exists"
   MOSQUITTO_PASSWORD=`cat ./mosquitto/raw.txt`
   export MOSQUITTO_PASSWORD
 else
@@ -171,7 +171,7 @@ fi
 
 if [[ -d ./homeassistant/.storage ]]
 then
-  echo "homeassistant/.storage directory already exist"
+  echo "homeassistant/.storage directory already exists"
 else
   mkdir -p "homeassistant/.storage"
 
@@ -212,10 +212,9 @@ fi
 # create homeassistant/custom_components repository
 if [[ -d ./homeassistant/custom_components ]]
 then
-  echo "homeassistant/custom_components directory already exist"
+  echo "homeassistant/custom_components directory already exists"
 else
   mkdir -p "homeassistant/custom_components"
-
   #download robonomics integration and unpack it
   wget https://github.com/airalab/homeassistant-robonomics-integration/archive/refs/tags/$ROBONOMICS_VERSION.zip &&
   unzip $ROBONOMICS_VERSION.zip &&

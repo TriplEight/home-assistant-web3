@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
     ports:
       - "1883:1883"
-      - "9001:9001"
+      - "9002:9001"
     volumes:
       - ${CONFIG_PATH}/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ${CONFIG_PATH}/mosquitto:/mosquitto
@@ -61,11 +61,20 @@ services:
     container_name: homeassistant
     image: ghcr.io/home-assistant/home-assistant:${HA_VERSION}
     restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
     volumes:
       - ${CONFIG_PATH}/homeassistant:/config
       - ${CONFIG_PATH}/mosquitto:/etc/mosquitto
       - ${CONFIG_PATH}/zigbee2mqtt:/opt/zigbee2mqtt
       - /etc/localtime:/etc/localtime:ro
-      - /run/dbus:/run/dbus:ro
+      - /var/run/dbus:/var/run/dbus:ro
+    ports:
+      - 8123:8123/tcp
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
     privileged: true
     network_mode: host

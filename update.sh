@@ -76,7 +76,7 @@ if [ "$ROBO_CUR_VER" != "$ROBONOMICS_VERSION" ]; then
     rm -r homeassistant-robonomics-integration-$ROBONOMICS_VERSION &&
     rm $ROBONOMICS_VERSION.zip
 else
-    echo "Robonomics version is uptodate"
+    echo "Robonomics version is is up to date."
 fi
 
 # return to the directory with compose
@@ -94,7 +94,7 @@ fi
 echo "compose started. Start cleaning old images."
 
 if [ "$Z2M_CUR_VER" = "$Z2M_VERSION" ]; then
-    echo "Z2M image uptodate"
+    echo "Z2M image is up to date."
 
 else
     echo "Delete old Z2m image"
@@ -102,7 +102,7 @@ else
 fi
 
 if [ "$IPFS_CUR_VER" = "v${IPFS_VERSION}" ]; then
-    echo "IPFS image uptodate"
+    echo "IPFS image is up to date."
 
 else
     echo "Delete old IPFS image"
@@ -110,7 +110,7 @@ else
 fi
 
 if [ "$LIBP2P_CUR_VER" = "v.${LIBP2P_VERSION}" ]; then
-    echo "LIBP2P image uptodate"
+    echo "LIBP2P image is up to date."
 
 else
     echo "Delete old LIBP2P image"
@@ -118,7 +118,7 @@ else
 fi
 
 if [ "$HA_CUR_VER" = "$HA_VERSION" ]; then
-    echo "HA image uptodate"
+    echo "HA image is up to date."
 
 else
     echo "Delete old HA image"
