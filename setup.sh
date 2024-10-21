@@ -138,35 +138,44 @@ else
   cp $CURRENT_PATH/scripts/mosquitto.conf  ./mosquitto/config/mosquitto.conf
 
   #zigbee2mqtt
-  echo "# Home Assistant integration (MQTT discovery)
-  homeassistant: true
+  cat << EOF > ./zigbee2mqtt/data/configuration.yaml
+# Home Assistant integration (MQTT discovery)
+homeassistant: true
 
-  # allow new devices to join
-  permit_join: false
+# allow new devices to join
+permit_join: false
 
-  # MQTT settings
-  mqtt:
-    # MQTT base topic for zigbee2mqtt MQTT messages
-    base_topic: zigbee2mqtt
-    # MQTT server URL
-    server: 'mqtt://localhost'
-    # MQTT server authentication, uncomment if required:
-    user: connectivity
-    password: $MOSQUITTO_PASSWORD
+# MQTT settings
+mqtt:
+  # MQTT base topic for zigbee2mqtt MQTT messages
+  base_topic: zigbee2mqtt
+  # MQTT server URL
+  server: 'mqtt://localhost'
+  # MQTT server authentication, uncomment if required:
+  user: connectivity
+  password: $MOSQUITTO_PASSWORD
 
-  advanced:
-    channel: $ZIGBEE_CHANNEL
+advanced:
+  channel: $ZIGBEE_CHANNEL
 
-  frontend:
-    # Optional, default 8080
-    port: 8099
+frontend:
+  # Optional, default 8080
+  port: 8099
 
-  # Serial settings
-  serial:
-    # Location of CC2531 USB sniffer
-    port: /dev/ttyACM0
+# Serial settings
+serial:
+  # Location of CC2531 USB sniffer
+  port: $Z2MPATH
 
-  " | tee ./zigbee2mqtt/data/configuration.yaml
+# Network settings
+# Uncomment and modify if using Zigbee network adapters
+# network:
+#   panId: 0x1a62
+#   extendedPanId: [0xDD, 0xDD, 0xDD, 0xDD, 0xDD, 0xDD, 0xDD, 0xDD]
+
+# Add any other desired configuration options here
+EOF
+
 fi
 
 if [[ -d ./homeassistant/.storage ]]

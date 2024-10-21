@@ -15,6 +15,12 @@ services:
       - ${CONFIG_PATH}/mosquitto:/mosquitto
     environment:
       - MOSQUITTO_PASSWORD=${MOSQUITTO_PASSWORD}
+    healthcheck:
+      test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "test", "-m", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   zigbee2mqtt:
     container_name: zigbee2mqtt
@@ -30,6 +36,12 @@ services:
     devices:
       # Make sure this matched your adapter location
       - ${Z2MPATH}:/dev/ttyUSB0
+    healthcheck:
+      test: ["CMD", "node", "/app/index.js", "healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   ipfs:
     container_name: ipfs-daemon
@@ -47,6 +59,12 @@ services:
       - 127.0.0.1:5001:5001
       - 8080:8080
     command: ["daemon", "--enable-gc", "--migrate=true", "--agent-version-suffix=docker"]
+    healthcheck:
+      test: ["CMD", "ipfs", "id"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   libp2p:
     container_name: libp2p-proxy
@@ -55,7 +73,12 @@ services:
     ports:
       - 127.0.0.1:8888:8888
       - 127.0.0.1:9999:9999
-
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8888"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   homeassistant:
     container_name: homeassistant
@@ -77,3 +100,9 @@ services:
       - NET_ADMIN
       - NET_RAW
     network_mode: host
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8123"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
