@@ -27,6 +27,8 @@ services:
     image: koenkk/zigbee2mqtt:${Z2M_VERSION}
     profiles: [z2m]
     restart: unless-stopped
+    cap_add:
+      - SYS_RAWIO
     volumes:
       - ${CONFIG_PATH}/zigbee2mqtt/data:/app/data
       - /run/udev:/run/udev:ro
@@ -42,6 +44,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
+    group_add:
+      - dialout
 
   ipfs:
     container_name: ipfs-daemon
@@ -99,6 +103,7 @@ services:
     cap_add:
       - NET_ADMIN
       - NET_RAW
+      - SYS_RAWIO
     network_mode: host
     devices:
       # Make sure this matches your adapter location
