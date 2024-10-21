@@ -34,7 +34,7 @@ services:
     environment:
       - TZ=${TZ}
     devices:
-      # Make sure this matched your adapter location
+      # Make sure this matches your adapter location
       - ${Z2MPATH}:/dev/ttyUSB0
     healthcheck:
       test: ["CMD", "node", "/app/index.js", "healthcheck"]
@@ -100,6 +100,9 @@ services:
       - NET_ADMIN
       - NET_RAW
     network_mode: host
+    devices:
+      # Make sure this matches your adapter location
+      - ${Z2MPATH}:/dev/ttyUSB0
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8123"]
       interval: 30s
