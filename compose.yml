@@ -36,7 +36,7 @@ services:
     environment:
       - TZ=${TZ}
     devices:
-      # Make sure this matches your adapter location
+      # Check if this matches your adapter location
       - ${Z2MPATH}:/dev/ttyUSB0
     healthcheck:
       test: ["CMD", "node", "/app/index.js", "healthcheck"]
@@ -106,7 +106,7 @@ services:
       - SYS_RAWIO
     network_mode: host
     devices:
-      # Make sure this matches your adapter location
+      # Check if this matches your adapter location
       - ${Z2MPATH}:/dev/ttyUSB0
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8123"]

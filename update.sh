@@ -49,6 +49,9 @@ docker compose --profile z2m pull
 # save current path to return later
 CURRENT_PATH=$(pwd)
 
+echo "Creating backup of current configuration..."
+tar -czf homeassistant_backup_$(date +%Y%m%d_%H%M%S).tar.gz -C $CONFIG_PATH homeassistant
+
 sh stop.sh
 
 cd $CONFIG_PATH

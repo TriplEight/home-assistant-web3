@@ -2,7 +2,8 @@
 
 echo "This script will create all the necessary repositories and start the docker containers"
 
-Z2MENABLE=true
+# Z2MENABLE=true
+Z2MENABLE=false
 
 # First we need to check that user insert the zigbee stick
 if [ -d /dev/serial/by-id/ ]; then
@@ -84,7 +85,7 @@ else
   exit 1
 fi
 
-# grap variables from .env file excluding comments
+# grep variables from .env file excluding comments
 export $(grep -v '^#' .env | xargs)
 
 # Check the last symbol in path. if it is "/", then delete it.
@@ -94,7 +95,7 @@ if [ "$LAST_SYMBOL" = "/" ]; then
   CONFIG_PATH="${CONFIG_PATH%?}"
 fi
 
-# grap version of packages
+# grep version of packages
 export $(grep -v '^#' scripts/packages.env | xargs)
 
 # save current path to return later
