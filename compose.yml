@@ -1,32 +1,43 @@
+x-service-defaults: &service-defaults
+  restart: unless-stopped
+  deploy:
+    resources:
+      limits:
+        cpus: '0.50'
+        memory: 256M
+
+x-healthcheck-defaults: &healthcheck-defaults
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 10s
+
 services:
   mosquitto:
+    <<: *service-defaults
     container_name: mosquitto
     build:
       context: ./scripts
       dockerfile: mosquitto.Dockerfile
       args:
         MOSQUITTO_VERSION: ${MOSQUITTO_VERSION}
-    restart: unless-stopped
     ports:
       - "1883:1883"
       - "9002:9001"
     volumes:
-      - ${CONFIG_PATH}/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ${CONFIG_PATH}/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
       - ${CONFIG_PATH}/mosquitto:/mosquitto
-    environment:
-      - MOSQUITTO_PASSWORD=${MOSQUITTO_PASSWORD}
+    secrets:
+      - mosquitto_password
     healthcheck:
+      <<: *healthcheck-defaults
       test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "test", "-m", "healthcheck"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 
   zigbee2mqtt:
+    <<: *service-defaults
     container_name: zigbee2mqtt
     image: koenkk/zigbee2mqtt:${Z2M_VERSION}
     profiles: [z2m]
-    restart: unless-stopped
     cap_add:
       - SYS_RAWIO
     volumes:
@@ -39,18 +50,14 @@ services:
       # Check if this matches your adapter location
       - ${Z2MPATH}:/dev/ttyUSB0
     healthcheck:
+      <<: *healthcheck-defaults
       test: ["CMD", "node", "/app/index.js", "healthcheck"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
       start_period: 30s
-    group_add:
-      - dialout
 
   ipfs:
+    <<: *service-defaults
     container_name: ipfs-daemon
     image: ipfs/kubo:v${IPFS_VERSION}
-    restart: unless-stopped
     volumes:
       - ${CONFIG_PATH}/ipfs/data:/data/ipfs
       - ${CONFIG_PATH}/ipfs/staging:/export
@@ -64,30 +71,24 @@ services:
       - 8080:8080
     command: ["daemon", "--enable-gc", "--migrate=true", "--agent-version-suffix=docker"]
     healthcheck:
+      <<: *healthcheck-defaults
       test: ["CMD", "ipfs", "id"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 
   libp2p:
+    <<: *service-defaults
     container_name: libp2p-proxy
-    restart: unless-stopped
     image: ghcr.io/pinoutltd/libp2p-ws-proxy:v.${LIBP2P_VERSION}
     ports:
       - 127.0.0.1:8888:8888
       - 127.0.0.1:9999:9999
     healthcheck:
+      <<: *healthcheck-defaults
       test: ["CMD", "nc", "-z", "localhost", "8888"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 
   homeassistant:
+    <<: *service-defaults
     container_name: homeassistant
     image: ghcr.io/home-assistant/home-assistant:${HA_VERSION}
-    restart: unless-stopped
     environment:
       - PUID=1000
       - PGID=1000
@@ -106,11 +107,12 @@ services:
       - SYS_RAWIO
     network_mode: host
     devices:
-      # Check if this matches your adapter location
       - ${Z2MPATH}:/dev/ttyUSB0
     healthcheck:
+      <<: *healthcheck-defaults
       test: ["CMD", "curl", "--fail", "http://localhost:8123"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
       start_period: 30s
+
+secrets:
+  mosquitto_password:
+    file: ./secrets/mosquitto_password.txt
