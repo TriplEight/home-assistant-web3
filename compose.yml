@@ -36,7 +36,7 @@ services:
   zigbee2mqtt:
     <<: *service-defaults
     container_name: zigbee2mqtt
-    image: koenkk/zigbee2mqtt:${Z2M_VERSION}
+    image: docker.io/koenkk/zigbee2mqtt:${Z2M_VERSION}
     profiles: [z2m]
     cap_add:
       - SYS_RAWIO
@@ -57,7 +57,7 @@ services:
   ipfs:
     <<: *service-defaults
     container_name: ipfs-daemon
-    image: ipfs/kubo:v${IPFS_VERSION}
+    image: docker.io/ipfs/kubo:v${IPFS_VERSION}
     volumes:
       - ${CONFIG_PATH}/ipfs/data:/data/ipfs
       - ${CONFIG_PATH}/ipfs/staging:/export

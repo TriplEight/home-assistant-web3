@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # first we need to find installed images versions
-IFS='   ' #setting space as delimiter
+IFS='   ' # space as delimiter
 
 STR="$(docker image ls | grep koenkk/zigbee2mqtt)"
 read -a ADDR <<<"$STR"
@@ -47,7 +47,8 @@ docker compose --profile z2m pull
 CURRENT_PATH=$(pwd)
 
 echo "Creating backup of current configuration..."
-tar -czf homeassistant_backup_$(date +%Y%m%d_%H%M%S).tar.gz -C $CONFIG_PATH homeassistant
+mkdir -p $CONFIG_PATH/backups
+tar -czf $CONFIG_PATH/backups/homeassistant_backup_$(date +%Y%m%d_%H%M%S).tar.gz -C $CONFIG_PATH homeassistant
 
 sh stop.sh
 

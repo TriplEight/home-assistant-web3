@@ -63,6 +63,9 @@ bash stop.sh
 1. To edit and test from IDE, I run Cursor with ssh to homelab server.
 2. To commit I sync the config back to my laptop and push to github.
     ```commandline
-    rsync -avP -e ssh --recursive --exclude=homeassistant --exclude=zigbee2mqtt --exclude=mosquitto --exclude=ipfs homelab:~/code/home-assistant-web3-build ~/code/home-assistant-web3-homelab-deployment/
+    rsync -avP -e ssh --recursive --exclude=configs homelab:~/code/home-assistant-web3-build ~/code/home-assistant-web3-homelab-deployment/
     ```
 3. On the server I run `git pull` and `./setup.sh` to update the config.
+
+# TODO
+- [ ] update.sh is a destructive disaster. It should be fixed: Should not delete containers if they are of the new version. Better it should be informative: not stop anything, not remove anything, just suggest running commands.

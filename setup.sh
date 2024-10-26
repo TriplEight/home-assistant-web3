@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+source .env
+
 echo "This script will create all the necessary repositories and start the docker containers"
 
 # set to true if you want to start Zigbee2MQTT container
@@ -243,7 +245,3 @@ else
     echo "Starting docker without Zigbee2mqtt"
     docker compose --env-file .env up -d
 fi
-
-# at the end save Z2Mpath to env file for use in the update script
-echo "" >> .env
-echo "Z2MPATH=$Z2MPATH" >> .env
