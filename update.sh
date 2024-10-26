@@ -28,7 +28,7 @@ echo "Home Assistant version - $HA_CUR_VER"
 echo "Updating git repository"
 git pull
 
-# grap variables from .env file excluding comments
+# grep variables from .env file excluding comments
 export $(grep -v '^#' .env | xargs)
 export Z2MPATH
 
@@ -38,9 +38,6 @@ echo "$LAST_SYMBOL"
 if [ "$LAST_SYMBOL" = "/" ]; then
   CONFIG_PATH="${CONFIG_PATH%?}"
 fi
-
-# find new version of the packages
-export $(grep -v '^#' scripts/packages.env | xargs)
 
 # download new docker images
 
@@ -98,7 +95,6 @@ echo "Compose started. Start cleaning old images."
 
 if [ "$Z2M_CUR_VER" = "$Z2M_VERSION" ]; then
     echo "Z2M image is up to date."
-
 else
     echo "Deleting old Z2M image"
     docker image rm koenkk/zigbee2mqtt:${Z2M_CUR_VER}
@@ -106,7 +102,6 @@ fi
 
 if [ "$IPFS_CUR_VER" = "v${IPFS_VERSION}" ]; then
     echo "IPFS image is up to date."
-
 else
     echo "Deleting old IPFS image"
     docker image rm ipfs/kubo:${IPFS_CUR_VER}
@@ -114,7 +109,6 @@ fi
 
 if [ "$LIBP2P_CUR_VER" = "v.${LIBP2P_VERSION}" ]; then
     echo "LIBP2P image is up to date."
-
 else
     echo "Deleting old LIBP2P image"
     docker image rm ghcr.io/pinoutltd/libp2p-ws-proxy:${LIBP2P_CUR_VER}
@@ -122,7 +116,6 @@ fi
 
 if [ "$HA_CUR_VER" = "$HA_VERSION" ]; then
     echo "HA image is up to date."
-
 else
     echo "Deleting old HA image"
     docker image rm ghcr.io/home-assistant/home-assistant:${HA_CUR_VER}

@@ -1,16 +1,18 @@
 #!/bin/bash
 
+set -euo pipefail
+
 echo "This script will create all the necessary repositories and start the docker containers"
 
-# Z2MENABLE=true
+# set to true if you want to start Zigbee2MQTT container
 Z2MENABLE=false
 
-# First we need to check that user insert the zigbee stick
+# Check if Zigbee dongle is connected
 if [ -d /dev/serial/by-id/ ]; then
-  # the directory exists
+  # If device exists
   if [ "$(ls -A /dev/serial/by-id/)" ]; then
     echo "Zigbee coordinator is installed"
-    # count how many devices connected
+    # Count how many devices are connected
     NUMB=$(ls -1q /dev/serial/by-id/ | wc -l)
 
     if (($NUMB > 1)); then
@@ -94,9 +96,6 @@ echo "$LAST_SYMBOL"
 if [ "$LAST_SYMBOL" = "/" ]; then
   CONFIG_PATH="${CONFIG_PATH%?}"
 fi
-
-# grep version of packages
-export $(grep -v '^#' scripts/packages.env | xargs)
 
 # save current path to return later
 CURRENT_PATH=$(pwd)
@@ -239,10 +238,10 @@ cd $CURRENT_PATH
 
 if [ "$Z2MENABLE" = "true" ]; then
     echo "Starting containers with Zigbee2mqtt"
-    docker compose --profile z2m --env-file .env --env-file scripts/packages.env up -d
+    docker compose --profile z2m --env-file .env up -d
 else
     echo "Starting docker without Zigbee2mqtt"
-    docker compose --env-file .env --env-file scripts/packages.env up -d
+    docker compose --env-file .env up -d
 fi
 
 # at the end save Z2Mpath to env file for use in the update script
