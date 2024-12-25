@@ -34,6 +34,10 @@ services:
   ipfs:
     container_name: ipfs-daemon
     image: ipfs/kubo:v${IPFS_VERSION}
+    deploy:
+      resources:
+        limits:
+          memory: 800M
     restart: unless-stopped
     volumes:
       - ${CONFIG_PATH}/ipfs/data:/data/ipfs
