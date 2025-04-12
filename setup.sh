@@ -69,12 +69,12 @@ else
 fi
 
 # check if user in docker group
-if id -nG "$USER" | grep -qw "docker"; then
-    echo "$USER belongs to docker group"
-else
-    echo "$USER does not belong to docker. Please add $USER to group."
-    exit 1
-fi
+# if id -nG "$USER" | grep -qw "docker"; then
+#     echo "$USER belongs to docker group"
+# else
+#     echo "$USER does not belong to docker. Please add $USER to group."
+#     exit 1
+# fi
 
 # check .env file
 if [[ -f .env ]]

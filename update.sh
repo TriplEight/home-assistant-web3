@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# first we need to find installed version of images
+# shellcheck source=.env
+source .env
+
+# Check installed images versions
 IFS='   ' #setting space as delimiter
 
 STR="$(docker image ls | grep koenkk/zigbee2mqtt)"
@@ -42,11 +45,11 @@ fi
 # find new version of the packages
 export $(grep -v '^#' scripts/packages.env | xargs)
 
-# download new docker images
+# Download new docker images
 
 docker compose --profile z2m pull
 
-# save current path to return later
+# Save current path to return later
 CURRENT_PATH=$(pwd)
 
 cd $CONFIG_PATH
@@ -67,7 +70,7 @@ echo "Robonomics cur version - $ROBO_CUR_VER"
 if [ "$ROBO_CUR_VER" != "$ROBONOMICS_VERSION" ]; then
     echo "robonomics version is out of date. Updating it"
     docker exec -d homeassistant sh -c "rm -r custom_components/robonomics"
-    #download robonomics integration and unpack it
+    # Download robonomics integration and unpack it
     wget https://github.com/airalab/homeassistant-robonomics-integration/archive/refs/tags/$ROBONOMICS_VERSION.zip &&
     unzip $ROBONOMICS_VERSION.zip &&
     mv homeassistant-robonomics-integration-$ROBONOMICS_VERSION/custom_components/robonomics ./homeassistant/custom_components/ &&
