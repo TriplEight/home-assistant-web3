@@ -10,7 +10,6 @@ fi
 
 # Source the .env file
 source .env
-source scripts/packages.env
 
 # set to true if you want to start Zigbee2MQTT container
 # Z2MENABLE=false
