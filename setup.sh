@@ -104,7 +104,7 @@ CURRENT_PATH=$(pwd)
 
 if [[ -d $CONFIG_PATH ]]
 then
-  cd $CONFIG_PATH
+  cd "$CONFIG_PATH" || exit 1
   echo "config path - $CONFIG_PATH"
 else
   echo "config directory does not exist. Exit"
@@ -124,7 +124,7 @@ fi
 if [[ -d ./mosquitto ]]
 then
   echo "mosquitto directory already exist"
-  MOSQUITTO_PASSWORD=`cat ./mosquitto/raw.txt`
+  MOSQUITTO_PASSWORD=$(cat ./mosquitto/raw.txt)
   export MOSQUITTO_PASSWORD
 else
   mkdir -p "mosquitto/config"
@@ -136,7 +136,7 @@ else
 
   export MOSQUITTO_PASSWORD
 
-  cp $CURRENT_PATH/scripts/mosquitto.conf  ./mosquitto/config/mosquitto.conf
+  cp "$CURRENT_PATH"/scripts/mosquitto.conf  ./mosquitto/config/mosquitto.conf
 
   #zigbee2mqtt
   echo "# Home Assistant integration (MQTT discovery)
@@ -218,24 +218,24 @@ else
   mkdir -p "homeassistant/custom_components"
 
   #download robonomics integration and unpack it
-  wget https://github.com/airalab/homeassistant-robonomics-integration/archive/refs/tags/$ROBONOMICS_VERSION.zip &&
-  unzip $ROBONOMICS_VERSION.zip &&
-  mv homeassistant-robonomics-integration-$ROBONOMICS_VERSION/custom_components/robonomics ./homeassistant/custom_components/ &&
-  rm -r homeassistant-robonomics-integration-$ROBONOMICS_VERSION &&
-  rm $ROBONOMICS_VERSION.zip
+  wget https://github.com/airalab/homeassistant-robonomics-integration/archive/refs/tags/"$ROBONOMICS_VERSION".zip &&
+  unzip "$ROBONOMICS_VERSION".zip &&
+  mv homeassistant-robonomics-integration-"$ROBONOMICS_VERSION"/custom_components/robonomics ./homeassistant/custom_components/ &&
+  rm -r homeassistant-robonomics-integration-"$ROBONOMICS_VERSION" &&
+  rm "$ROBONOMICS_VERSION".zip
 fi
 
 # return to the directory with compose
-cd $CURRENT_PATH
+cd "$CURRENT_PATH" || exit 1
 
 
-if [ "$Z2MENABLE" = "true" ]; then
-    echo "start docker with zigbee2mqtt"
-    docker compose --profile z2m up -d
-else
-    echo "start docker without zigbee2mqtt"
-    docker compose up -d
-fi
+# if [ "$Z2MENABLE" = "true" ]; then
+#     echo "start docker with zigbee2mqtt"
+#     docker compose --profile z2m up -d
+# else
+#     echo "start docker without zigbee2mqtt"
+#     docker compose up -d
+# fi
 
 # at the end save Z2Mpath to env file for use in the update script
 echo "" >> .env
