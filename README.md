@@ -63,3 +63,14 @@ To stop everything run stop script:
 ```commandline
 bash stop.sh
 ```
+
+## Local development
+
+1. To edit and test from IDE, I run Cursor with ssh to homelab server.
+2. To commit I sync the config back to my laptop and push to github.
+
+    ```commandline
+    rsync -avP -e ssh --recursive --exclude=configs homelab:~/code/home-assistant-web3-build ~/code/home-assistant-web3-homelab-deployment/
+    ```
+
+3. On the server I run `git pull` and `./setup.sh` to update the config.
