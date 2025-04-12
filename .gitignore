@@ -1,6 +1,3 @@
-homeassistant
-zigbee2mqtt
-mosquitto
-ipfs
-libp2p-ws-proxy
 .env
+configs/
+.vscode/
