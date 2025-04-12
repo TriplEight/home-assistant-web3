@@ -62,9 +62,9 @@ echo "Z2M path is - $Z2MPATH"
 
 echo "Checking docker installation"
 if command -v docker &> /dev/null; then
-    echo "Docker installation found"
+    echo "Docker is installed"
 else
-    echo "Docker installation not found. Please install docker."
+    echo "Docker is not installed. Please install docker."
     exit 1
 fi
 
@@ -79,14 +79,13 @@ fi
 # check .env file
 if [[ -f .env ]]
 then
+  # grep variables from .env file excluding comments
+  export "$(grep -v '^#' .env | xargs)"
   echo ". env file exists"
 else
   echo ".env file does not exist. Exit"
   exit 1
 fi
-
-# grap variables from .env file excluding comments
-export $(grep -v '^#' .env | xargs)
 
 # Check the last symbol in path. if it is "/", then delete it.
 LAST_SYMBOL=${CONFIG_PATH: -1}
@@ -95,8 +94,8 @@ if [ "$LAST_SYMBOL" = "/" ]; then
   CONFIG_PATH="${CONFIG_PATH%?}"
 fi
 
-# grap version of packages
-export $(grep -v '^#' scripts/packages.env | xargs)
+# grep versions of packages
+export "$(grep -v '^#' scripts/packages.env | xargs)"
 
 # save current path to return later
 CURRENT_PATH=$(pwd)
@@ -229,13 +228,13 @@ fi
 cd "$CURRENT_PATH" || exit 1
 
 
-# if [ "$Z2MENABLE" = "true" ]; then
-#     echo "start docker with zigbee2mqtt"
-#     docker compose --profile z2m up -d
-# else
-#     echo "start docker without zigbee2mqtt"
-#     docker compose up -d
-# fi
+if [ "$Z2MENABLE" = "true" ]; then
+    echo "start docker with zigbee2mqtt"
+    docker compose --profile z2m up -d
+else
+    echo "start docker without zigbee2mqtt"
+    docker compose up -d
+fi
 
 # at the end save Z2Mpath to env file for use in the update script
 echo "" >> .env
