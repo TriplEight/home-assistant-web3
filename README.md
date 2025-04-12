@@ -4,11 +4,18 @@ This repository contains docker compose file with Home Assistant + ipfs daemon +
 
 ## Requirements 
 
-Docker engine + docker compose.
+Fisrt of all you need to install Docker. Find installation instructions on official website:
+- [Docker Docs](https://docs.docker.com/engine/install/ubuntu/)
+
+Alternatively, good instructions could be found here:
+- [Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-22-04)
+
+
+
 
 **Docker should start without root preventives.** This is important to provide correct access to directories.
 
-Install additional packages:
+then, install additional packages:
 ```commandline
 sudo apt-get install wget unzip git jq
 ```
