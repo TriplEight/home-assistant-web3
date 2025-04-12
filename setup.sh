@@ -11,9 +11,6 @@ fi
 # Source the .env file
 source .env
 
-# set to true if you want to start Zigbee2MQTT container
-# Z2MENABLE=false
-
 # Check if Zigbee dongle is connected
 if [ -d /dev/serial/by-id/ ]; then
   # If device exists
