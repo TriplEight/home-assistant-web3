@@ -10,7 +10,7 @@ if [ -z "$1" ]; then
 fi
 
 PASSWORD=$1
-CONFIG_PATH=${2:-./config}
+CONFIG_PATH=${2:-./configs}
 
 # Ensure the mosquitto config directory exists
 mkdir -p ${CONFIG_PATH}/mosquitto/config
@@ -21,9 +21,5 @@ touch ${CONFIG_PATH}/mosquitto/config/password_file
 # Add users
 docker run --rm -v ${CONFIG_PATH}/mosquitto:/mosquitto eclipse-mosquitto \
   mosquitto_passwd -b /mosquitto/config/password_file connectivity "$PASSWORD"
-
-# Add any other users you need
-# docker run --rm -v ${CONFIG_PATH}/mosquitto:/mosquitto eclipse-mosquitto \
-#   mosquitto_passwd -b /mosquitto/config/password_file homeassistant "your_ha_password"
 
 echo "MQTT users created successfully."
