@@ -4,3 +4,4 @@ mosquitto
 ipfs
 libp2p-ws-proxy
 .env
+configs/
