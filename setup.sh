@@ -4,7 +4,19 @@ echo "this script will create all necessary repositories and start docker contai
 
 Z2MENABLE=true
 
-# First we need to check that user insert the zigbee stick
+# Check if the .env file exists
+if [ ! -f .env ]; then
+  echo "[ERROR]: .env not found."
+  exit 1
+fi
+
+# Source the .env file
+set -a # Automatically export all variables
+source .env
+source scripts/packages.env
+set +a # Disable automatic export
+
+# Check if zigbee stick is connected
 if [ -d /dev/serial/by-id/ ]; then
   # the directory exists
   if [ "$(ls -A /dev/serial/by-id/)" ]; then
@@ -76,17 +88,6 @@ fi
 #     exit 1
 # fi
 
-# check .env file
-if [[ -f .env ]]
-then
-  # grep variables from .env file excluding comments
-  export "$(grep -v '^#' .env | xargs)"
-  echo ". env file exists"
-else
-  echo ".env file does not exist. Exit"
-  exit 1
-fi
-
 # Check the last symbol in path. if it is "/", then delete it.
 LAST_SYMBOL=${CONFIG_PATH: -1}
 echo "$LAST_SYMBOL"
@@ -94,12 +95,8 @@ if [ "$LAST_SYMBOL" = "/" ]; then
   CONFIG_PATH="${CONFIG_PATH%?}"
 fi
 
-# grep versions of packages
-export "$(grep -v '^#' scripts/packages.env | xargs)"
-
 # save current path to return later
 CURRENT_PATH=$(pwd)
-
 
 if [[ -d $CONFIG_PATH ]]
 then
