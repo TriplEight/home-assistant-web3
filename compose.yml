@@ -29,11 +29,11 @@ services:
     volumes:
       - ${CONFIG_PATH}/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
       - ${CONFIG_PATH}/mosquitto:/mosquitto
-    secrets:
-      - mosquitto_password
     healthcheck:
       <<: *healthcheck-defaults
-      test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "test", "-m", "healthcheck"]
+      #test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "test", "-m", "healthcheck"]
+      test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "test", "-m", "healthcheck", "-u", "connectivity", "-P", "${MOSQUITTO_PASSWORD}"]
+
 
   zigbee2mqtt:
     <<: *service-defaults
@@ -107,14 +107,11 @@ services:
       - NET_ADMIN
       - NET_RAW
       - SYS_RAWIO
+    # homeassistant Published ports are discarded when using host network mode
     network_mode: host
-    devices:
-      - ${Z2MPATH}:/dev/ttyUSB0
+    # devices:
+    #   - ${Z2MPATH}:/dev/ttyUSB0
     healthcheck:
       <<: *healthcheck-defaults
       test: ["CMD", "curl", "--fail", "http://localhost:8123"]
       start_period: 30s
-
-secrets:
-  mosquitto_password:
-    file: ./secrets/mosquitto_password.txt

@@ -115,15 +115,19 @@ fi
 if [[ -d ./mosquitto ]]
 then
   echo "Mosquitto directory already exists"
-  MOSQUITTO_PASSWORD=`cat ./mosquitto/raw.txt`
+  touch "$CONFIG_PATH"/mosquitto/config/passwd
+  MOSQUITTO_PASSWORD=$(cat ./mosquitto/config/passwd)
   export MOSQUITTO_PASSWORD
 else
-  mkdir -p "mosquitto/config"
-  mkdir -p "zigbee2mqtt/data"
+  mkdir -p zigbee2mqtt/data
+  mkdir -p mosquitto/log
+  mkdir -p mosquitto/config
+  touch "$CONFIG_PATH"/mosquitto/config/passwd
 
   # create password for mqtt. Then save it in mosquitto home directory and provide this data to z2m configuration
   MOSQUITTO_PASSWORD=$(openssl rand -base64 32)
-  echo "MOSQUITTO_PASSWORD=$MOSQUITTO_PASSWORD" >> .env
+  echo "MOSQUITTO_PASSWORD=$MOSQUITTO_PASSWORD" >> "$CURRENT_PATH"/.env
+  docker run --rm -v "$CONFIG_PATH"/mosquitto/config:/mosquitto/config eclipse-mosquitto:"${MOSQUITTO_VERSION}" mosquitto_passwd -b /mosquitto/config/passwd connectivity "$MOSQUITTO_PASSWORD"
 
   export MOSQUITTO_PASSWORD
 

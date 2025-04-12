@@ -7,7 +7,7 @@ if ! test -f /mosquitto/passwd; then
   # create mosquitto passwordfile
   touch /mosquitto/passwd
   chmod 0700 /mosquitto/passwd
-  mosquitto_passwd -b -c /mosquitto/passwd connectivity $MOSQUITTO_PASSWORD
+  mosquitto_passwd -b -c /mosquitto/passwd connectivity "$MOSQUITTO_PASSWORD"
 fi
 
 # Fix write permissions for mosquitto directories
